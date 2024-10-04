@@ -79,7 +79,9 @@ const moyenne = (saisie, total) => {
 
 const lireSaisie = (laSaisie, type) => {
     if (saisie.value === "Error") off();
-    if (saisie.value === "" && type === "operation") { }
+    if (saisie.value === "" && type === "operation") {
+        saisie.value = `0${laSaisie}`;
+    }
     else {
         if (saisie.value === "0" && type != "operation") off();
         if (laSaisie === "off") off();
