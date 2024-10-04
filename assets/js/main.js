@@ -39,7 +39,23 @@ const clear = () => saisie.value = 0;
 const off = () => saisie.value = "";
 
 const egal = (calcul) => {
-    let block = calcul.match(/[\d\.]+|\D+/g);
+    /*
+        let block = calcul.split('x').join(',').split('/').join(',').split('-').join(',').split('+').join(',').split(',');
+        let block2 = calcul.match(/[\d\.]+|\D+/g);
+    */
+    let block3 = calcul.split('');
+    let block = [];
+    let elem = "";
+    for (let i = 0; i < block3.length; i++) {
+        if ((block3[i] != "x") && (block3[i] != "/") && (block3[i] != "-") && (block3[i] != "+")) {
+            elem += block3[i];
+        } else {
+            block.push(elem);
+            block.push(block3[i]);
+            elem = "";
+        }
+    }
+    block.push(elem);
 
     console.log("[start]", block, block.length);
     let index_while = 0;
