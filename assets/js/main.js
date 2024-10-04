@@ -61,7 +61,7 @@ const egal = (calcul) => {
     let index_while = 0;
     while (block.length > 1) {
         index_while++;
-        if (index_while > 3) break;
+        // if (index_while > 3) break;
 
         for (let index = 0; index < block.length; index++) {
             element = block[index];
