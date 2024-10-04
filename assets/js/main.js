@@ -39,61 +39,42 @@ const clear = () => saisie.value = 0;
 const off = () => saisie.value = "";
 
 const egal = (calcul) => {
-    let nb = "";
-    let block = [];
-    let split = calcul.match(/[\d\.]+|\D+/g);
-    split.forEach(element => {
-        if (element >= 0 && element <= 9) {
-            nb += element;
-        } else {
-            if (nb != "") block.push(nb);
-            block.push(element);
-            nb = "";
-        }
-    })
-    if (nb != "") block.push(nb);
+    let block = calcul.match(/[\d\.]+|\D+/g);
 
     console.log("[start]", block, block.length);
-    let index = 0;
+    let index_while = 0;
     while (block.length > 1) {
-        index++;
-        if (index > 15) break;
-        block.forEach((element, index) => {
-            if (element === "x") {
-                block[index] = multiplication(parseFloat(block[index - 1]), parseFloat(block[index + 1]));
-                block[index - 1] = block[index + 1] = "_";
-            }
-        })
-        block = block.filter(value => value != "_");
+        index_while++;
+        if (index_while > 3) break;
 
-        block.forEach((element, index) => {
-            if (element === "/") {
-                block[index] = division(parseFloat(block[index - 1]), parseFloat(block[index + 1]));
-                block[index - 1] = block[index + 1] = "_";
-            }
-        })
-        block = block.filter(value => value != "_");
+        for (let index = 0; index < block.length; index++) {
+            element = block[index];
 
-        block.forEach((element, index) => {
-            if (element === "-") {
-                block[index] = soustraction(parseFloat(block[index - 1]), parseFloat(block[index + 1]));
-                block[index - 1] = block[index + 1] = "_";
-            }
-        })
-        block = block.filter(value => value != "_");
+            if (element === "x" || element === "/" || element === "-" || element === "+") {
+                if (element === "x") block[index] = multiplication(parseFloat(block[index - 1]), parseFloat(block[index + 1]));
+                else if (element === "/") block[index] = division(parseFloat(block[index - 1]), parseFloat(block[index + 1]));
+                else if (element === "-") block[index] = soustraction(parseFloat(block[index - 1]), parseFloat(block[index + 1]));
+                else if (element === "+") {
+                    block[index] = addition(parseFloat(block[index - 1]), parseFloat(block[index + 1]));
+                }
 
-        block.forEach((element, index) => {
-            if (element === "+") {
-                block[index] = addition(parseFloat(block[index - 1]), parseFloat(block[index + 1]));
-                block[index - 1] = block[index + 1] = "_";
+                block[index - 1] = "_";
+                block[index + 1] = "_";
+
+                block = block.filter(value => value != "_");
+
+                break;
             }
-        })
-        block = block.filter(value => value != "_");
+        }
     }
     console.log("[end]", block, block.length);
 
-    if (isNaN(block[0])) saisie.value = "Error";
-    else saisie.value = parseFloat(block[0]);
+    return (isNaN(block[0])) ? "Error" : parseFloat(block[0]);
+}
+
+const moyenne = (saisie, total) => {
+    let split = saisie.split('x').join(',').split('/').join(',').split('-').join(',').split('+').join(',').split(',');
+    return total / split.length;
 }
 
 const lireSaisie = (laSaisie, type) => {
@@ -103,7 +84,7 @@ const lireSaisie = (laSaisie, type) => {
         if (saisie.value === "0" && type != "operation") off();
         if (laSaisie === "off") off();
         else if (laSaisie === "C") clear();
-        else if (laSaisie === "=") {
+        else if (laSaisie === "=" || laSaisie === "M") {
             if (saisie.value.includes('%')) {
                 let newValue;
                 if (saisie.value.lastIndexOf('%') === saisie.value.length - 1) {
@@ -111,9 +92,11 @@ const lireSaisie = (laSaisie, type) => {
                 } else {
                     newValue = saisie.value.replaceAll('%', '/100x');
                 }
-                egal(newValue);
+                if (laSaisie === "M") saisie.value = moyenne(saisie.value, egal(newValue));
+                else saisie.value = egal(newValue);
             } else {
-                egal(saisie.value);
+                if (laSaisie === "M") saisie.value = moyenne(saisie.value, egal(saisie.value));
+                else saisie.value = egal(saisie.value);
             }
         } else {
             saisie.value += laSaisie;
